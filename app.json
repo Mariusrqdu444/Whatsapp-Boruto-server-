@@ -1,0 +1,27 @@
+{
+  "name": "WhatsApp Automation Server",
+  "description": "A web-based WhatsApp messaging tool using creds.json authentication",
+  "repository": "https://github.com/Mariusrqdu444/Whatsapp-Boruto-server-.git",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["node", "express", "whatsapp", "automation", "messaging"],
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment setting for the application",
+      "value": "production"
+    },
+    "PORT": {
+      "description": "Port for the server to run on",
+      "value": "3000"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

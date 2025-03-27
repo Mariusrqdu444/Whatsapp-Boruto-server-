@@ -1,76 +1,81 @@
 # WhatsApp Automation Server
 
-A web-based WhatsApp messaging tool that uses creds.json authentication to send messages to contacts or groups without QR code scanning.
+A web-based WhatsApp messaging tool that uses creds.json authentication to send messages to contacts or groups.
 
 ## Features
 
-- **No QR Code Scanning**: Uses creds.json authentication to connect to WhatsApp
-- **Flexible Messaging**: Send to individuals or groups
-- **Message Input Options**: Type messages directly or upload a file
-- **Customizable Delay**: Set delay between messages to avoid rate limiting
-- **Continuous Messaging**: Enable non-stop messaging with configurable intervals
-- **Retry Mechanism**: Automatically retry failed messages
-- **Cloud Deployment**: Ready to deploy on Render.com or Heroku
+- **No QR Code Authentication**: Uses creds.json file for direct connection to WhatsApp
+- **Multiple Target Options**: Send to individual contacts or groups
+- **Flexible Message Input**: Enter message text directly or upload from a file
+- **Customizable Messaging**: Set delay between messages and enable continuous sending
+- **Robust Session Management**: Database-backed session persistence
+- **User-friendly Interface**: Clean, responsive UI for easy navigation
 
-## How to Use
+## Setup Instructions
 
-1. **Obtain creds.json**:
-   - You need a valid WhatsApp credentials file (creds.json) from a previous session.
-   - This file contains your authenticated session data so you can connect without QR code scanning.
+### Prerequisites
 
-2. **Start the Application**:
-   - For local development: `npm run dev`
-   - For production: `npm run build` followed by `npm run start`
+- Node.js 16+ installed
+- PostgreSQL database
+- WhatsApp account with an active phone number
 
-3. **Configure and Send Messages**:
-   - Upload your creds.json file
-   - Enter the target phone number (including country code without '+' or spaces)
-   - Select target type (individual or group)
-   - Enter message or upload message file
-   - Configure optional settings (delay, retries, continuous messaging)
-   - Click "Start Messaging" button
+### Installation
 
-4. **Monitor Status**:
-   - The application provides real-time status updates
-   - Check the log section for detailed information about message delivery
+1. Clone the repository:
+   ```
+   git clone https://github.com/Mariusrqdu444/Whatsapp-Boruto-server-.git
+   cd Whatsapp-Boruto-server-
+   ```
 
-## Deployment Options
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-### Deploy to Render
+3. Create a `.env` file based on the example:
+   ```
+   cp .env.example .env
+   ```
+   
+4. Update the `.env` file with your PostgreSQL credentials.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+5. Run database migrations:
+   ```
+   npm run db:push
+   ```
 
-The repository includes a render.yaml file that configures:
-- Web service with proper build settings
-- PostgreSQL database for session storage
-- Environment variables
+6. Start the application:
+   ```
+   npm run dev
+   ```
 
-### Deploy to Heroku
+### Obtaining creds.json
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+The `creds.json` file contains authentication credentials for your WhatsApp account. You'll need to generate this file once using a separate WhatsApp client library that supports saving credentials.
 
-The repository includes a Procfile and necessary configuration for Heroku deployment.
+## Deployment
 
-## Environment Variables
+### Deploying to Render.com
 
-- `DATABASE_URL`: PostgreSQL connection string (provided by Render or Heroku)
-- `PORT`: Port for the server (defaults to 3000 if not specified)
-- `NODE_ENV`: Environment setting (production/development)
+1. Connect your GitHub repository to Render
+2. Configure a new Web Service with the following settings:
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm run start`
+   - Add the environment variables from your `.env` file
 
-## Technical Architecture
+### Deploying to Heroku
 
-- **Frontend**: React with TailwindCSS and shadcn/ui components
-- **Backend**: Express.js REST API
-- **Database**: PostgreSQL with Drizzle ORM
-- **WhatsApp Integration**: Baileys library with creds.json authentication
-
-## Security Considerations
-
-- This tool requires a valid WhatsApp credentials file which contains sensitive authentication data.
-- Never share your creds.json file as it could allow others to access your WhatsApp account.
-- Use this tool responsibly and in compliance with WhatsApp's terms of service.
-- Avoid sending spam or bulk messages that could get your number blocked.
+1. Create a new app on Heroku
+2. Connect to your GitHub repository
+3. Add the PostgreSQL add-on
+4. Configure the environment variables
+5. Deploy the application
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Notes
+
+- This application is for educational purposes only
+- Please use responsibly and comply with WhatsApp's terms of service

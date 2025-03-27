@@ -21,6 +21,11 @@ const upload = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
+  // Health check endpoint for deployment platforms like Render
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "up", timestamp: new Date().toISOString() });
+  });
+
   // WhatsApp session status check
   app.get("/api/whatsapp/status", async (req, res) => {
     try {

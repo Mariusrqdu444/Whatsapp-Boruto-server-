@@ -21,6 +21,16 @@ export default async function runMigration() {
 }
 
 // Run as standalone script
-if (require.main === module) {
-  runMigration().catch(console.error);
+// This import.meta approach is used for ES modules
+// The URL constructor will throw if import.meta.url is undefined
+try {
+  const url = new URL(import.meta.url);
+  // This is a heuristic: if this file is the entry point, url.pathname should end with this filename
+  if (url.pathname.endsWith('/migrate.ts') || url.pathname.endsWith('/migrate.js')) {
+    runMigration().catch(console.error);
+  }
+} catch (e) {
+  // If import.meta.url is undefined, we're not in a module context
+  // or if the URL constructor throws
+  console.error("Error checking if this is the main module:", e);
 }

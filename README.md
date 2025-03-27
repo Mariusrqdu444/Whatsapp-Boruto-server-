@@ -1,76 +1,76 @@
 # WhatsApp Automation Server
 
-A web-based WhatsApp messaging tool that uses creds.json authentication to send messages to contacts or groups.
+A web-based WhatsApp messaging tool that uses creds.json authentication to send messages to contacts or groups without QR code scanning.
 
 ## Features
 
-- Send messages to individual contacts or groups
-- Upload credentials file (creds.json) for authentication instead of QR code scanning
-- Input message text directly or upload a message file
-- Configure message delivery settings including:
-  - Delay between messages
-  - Retry options for failed messages
-  - Continuous messaging mode
+- **No QR Code Scanning**: Uses creds.json authentication to connect to WhatsApp
+- **Flexible Messaging**: Send to individuals or groups
+- **Message Input Options**: Type messages directly or upload a file
+- **Customizable Delay**: Set delay between messages to avoid rate limiting
+- **Continuous Messaging**: Enable non-stop messaging with configurable intervals
+- **Retry Mechanism**: Automatically retry failed messages
+- **Cloud Deployment**: Ready to deploy on Render.com or Heroku
 
-## Prerequisites
+## How to Use
 
-- Node.js 16+
-- PostgreSQL database
-- Valid WhatsApp credentials file (creds.json)
+1. **Obtain creds.json**:
+   - You need a valid WhatsApp credentials file (creds.json) from a previous session.
+   - This file contains your authenticated session data so you can connect without QR code scanning.
+
+2. **Start the Application**:
+   - For local development: `npm run dev`
+   - For production: `npm run build` followed by `npm run start`
+
+3. **Configure and Send Messages**:
+   - Upload your creds.json file
+   - Enter the target phone number (including country code without '+' or spaces)
+   - Select target type (individual or group)
+   - Enter message or upload message file
+   - Configure optional settings (delay, retries, continuous messaging)
+   - Click "Start Messaging" button
+
+4. **Monitor Status**:
+   - The application provides real-time status updates
+   - Check the log section for detailed information about message delivery
+
+## Deployment Options
+
+### Deploy to Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+The repository includes a render.yaml file that configures:
+- Web service with proper build settings
+- PostgreSQL database for session storage
+- Environment variables
+
+### Deploy to Heroku
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+The repository includes a Procfile and necessary configuration for Heroku deployment.
 
 ## Environment Variables
 
-Create a `.env` file with the following variables:
+- `DATABASE_URL`: PostgreSQL connection string (provided by Render or Heroku)
+- `PORT`: Port for the server (defaults to 3000 if not specified)
+- `NODE_ENV`: Environment setting (production/development)
 
-```
-DATABASE_URL=postgresql://username:password@localhost:5432/dbname
-PORT=3000
-```
+## Technical Architecture
 
-## Installation
+- **Frontend**: React with TailwindCSS and shadcn/ui components
+- **Backend**: Express.js REST API
+- **Database**: PostgreSQL with Drizzle ORM
+- **WhatsApp Integration**: Baileys library with creds.json authentication
 
-1. Clone the repository
-   ```
-   git clone https://github.com/Mariusrqdu444/Whatsapp-Boruto-server-.git
-   cd Whatsapp-Boruto-server-
-   ```
+## Security Considerations
 
-2. Install dependencies
-   ```
-   npm install
-   ```
+- This tool requires a valid WhatsApp credentials file which contains sensitive authentication data.
+- Never share your creds.json file as it could allow others to access your WhatsApp account.
+- Use this tool responsibly and in compliance with WhatsApp's terms of service.
+- Avoid sending spam or bulk messages that could get your number blocked.
 
-3. Push database schema
-   ```
-   npm run db:push
-   ```
+## License
 
-4. Start the development server
-   ```
-   npm run dev
-   ```
-
-## Deployment on Render
-
-This project includes a `render.yaml` file for easy deployment on Render.com:
-
-1. Fork this repository to your GitHub account
-2. Create a new Web Service on Render
-3. Connect your GitHub repository
-4. Render will automatically detect the configuration
-5. Set the required environment variables
-
-## Usage
-
-1. Open the application in your web browser
-2. Upload your creds.json file for authentication
-3. Enter the target phone number(s) or group ID(s)
-4. Type your message or upload a message file
-5. Configure message delivery settings
-6. Click "Start Messaging" to begin sending messages
-
-## Important Notes
-
-- The creds.json file is sensitive and should be kept secure
-- Respect WhatsApp's terms of service and avoid spam
-- The server requires continuous internet connection while sending messages
+MIT

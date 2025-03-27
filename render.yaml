@@ -9,7 +9,9 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: whatsapp-automation-db
+          property: connectionString
       - key: PORT
         value: 3000
       - key: NODE_ENV

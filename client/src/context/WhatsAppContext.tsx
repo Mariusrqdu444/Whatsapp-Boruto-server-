@@ -18,6 +18,8 @@ type WhatsAppFormData = {
   messageDelay: number;
   enableRetry: boolean;
   maxRetries: number;
+  enableContinuous: boolean;  // For non-stop messaging
+  delaySeconds: number;       // Delay in seconds between messages
 };
 
 interface WhatsAppContextType {
@@ -48,6 +50,8 @@ const defaultFormData: WhatsAppFormData = {
   messageDelay: 1000,
   enableRetry: false,
   maxRetries: 3,
+  enableContinuous: false,
+  delaySeconds: 5,
 };
 
 const WhatsAppContext = createContext<WhatsAppContextType>({
@@ -187,6 +191,8 @@ export const WhatsAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       formDataToSend.append("messageDelay", formData.messageDelay.toString());
       formDataToSend.append("enableRetry", formData.enableRetry.toString());
       formDataToSend.append("maxRetries", formData.maxRetries.toString());
+      formDataToSend.append("enableContinuous", formData.enableContinuous.toString());
+      formDataToSend.append("delaySeconds", formData.delaySeconds.toString());
       
       const response = await startSession(formDataToSend);
       

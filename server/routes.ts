@@ -73,6 +73,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const messageDelay = parseInt(req.body.messageDelay) || 1000;
       const enableRetry = req.body.enableRetry === "true";
       const maxRetries = parseInt(req.body.maxRetries) || 3;
+      const enableContinuous = req.body.enableContinuous === "true";
+      const delaySeconds = parseInt(req.body.delaySeconds) || 5;
 
       if (!userPhone) {
         return res.status(400).json({ 
@@ -107,7 +109,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         targetType,
         messageDelay,
         enableRetry,
-        maxRetries
+        maxRetries,
+        enableContinuous,
+        delaySeconds
       );
 
       // Store the session in memory for tracking
@@ -119,6 +123,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messageDelay,
         enableRetry,
         maxRetries,
+        enableContinuous,
+        delaySeconds,
         status: "active",
         createdAt: new Date()
       });

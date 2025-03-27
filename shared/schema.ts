@@ -21,6 +21,8 @@ export const sessions = pgTable("sessions", {
   messageDelay: integer("message_delay").notNull().default(1000),
   enableRetry: boolean("enable_retry").notNull().default(false),
   maxRetries: integer("max_retries").notNull().default(3),
+  enableContinuous: boolean("enable_continuous").notNull().default(false),
+  delaySeconds: integer("delay_seconds").notNull().default(5),
   status: text("status").notNull().default("active"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

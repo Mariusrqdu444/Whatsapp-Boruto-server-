@@ -293,6 +293,33 @@ const MessageForm = () => {
                 </p>
               </div>
               
+              <div>
+                <Label htmlFor="delaySeconds">Delay Between Loops (seconds)</Label>
+                <Input 
+                  type="number" 
+                  id="delaySeconds" 
+                  name="delaySeconds" 
+                  value={formData.delaySeconds}
+                  min="1"
+                  className="mt-1"
+                  onChange={(e) => setFormData({...formData, delaySeconds: parseInt(e.target.value) || 5})}
+                  disabled={isMessaging || !formData.enableContinuous}
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Delay in seconds between continuous message loops
+                </p>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="enableContinuous" 
+                  checked={formData.enableContinuous}
+                  onCheckedChange={(checked) => setFormData({...formData, enableContinuous: checked})}
+                  disabled={isMessaging}
+                />
+                <Label htmlFor="enableContinuous">Enable continuous messaging (non-stop)</Label>
+              </div>
+              
               <div className="flex items-center space-x-2">
                 <Switch 
                   id="enableRetry" 

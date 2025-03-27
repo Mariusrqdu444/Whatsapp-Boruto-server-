@@ -74,53 +74,101 @@ export const sendWhatsAppMessage = async (
   targetType: string = 'individual',
   messageDelay: number = 1000,
   enableRetry: boolean = false,
-  maxRetries: number = 3
+  maxRetries: number = 3,
+  enableContinuous: boolean = false,
+  delaySeconds: number = 5
 ) => {
   if (!sock) {
     throw new Error('WhatsApp connection not initialized');
   }
 
-  try {
-    const jid = formatPhoneNumber(userPhone, targetType);
-    
-    // For message with multiple lines, send each line with delay
-    const messageLines = messageContent.split('\n').filter(line => line.trim() !== '');
-    
-    for (const line of messageLines) {
-      if (line.trim() === '') continue;
+  // Global variable to track if sending should continue
+  let continueRunning = true;
+
+  // Function to handle message sending (for reusing in continuous mode)
+  const sendMessages = async () => {
+    try {
+      const jid = formatPhoneNumber(userPhone, targetType);
       
-      let sent = false;
-      let attempts = 0;
+      // For message with multiple lines, send each line with delay
+      const messageLines = messageContent.split('\n').filter(line => line.trim() !== '');
       
-      while (!sent && (attempts <= maxRetries || !enableRetry)) {
-        try {
-          await sock.sendMessage(jid, { text: line });
-          sent = true;
-          console.log(`Message sent to ${jid}: ${line.substring(0, 30)}...`);
-        } catch (error) {
-          attempts++;
-          console.error(`Error sending message (attempt ${attempts}):`, error);
-          
-          if (!enableRetry || attempts > maxRetries) {
-            throw error;
+      for (const line of messageLines) {
+        // If stop requested, break out of loop
+        if (!continueRunning) break;
+        
+        if (line.trim() === '') continue;
+        
+        let sent = false;
+        let attempts = 0;
+        
+        while (!sent && (attempts <= maxRetries || !enableRetry) && continueRunning) {
+          try {
+            await sock.sendMessage(jid, { text: line });
+            sent = true;
+            console.log(`Message sent to ${jid}: ${line.substring(0, 30)}...`);
+          } catch (error) {
+            attempts++;
+            console.error(`Error sending message (attempt ${attempts}):`, error);
+            
+            if (!enableRetry || attempts > maxRetries) {
+              if (!continueRunning) break;
+              throw error;
+            }
+            
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000));
           }
-          
-          // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        
+        // Add delay between messages (if still running)
+        if (messageLines.length > 1 && continueRunning) {
+          await new Promise(resolve => setTimeout(resolve, messageDelay));
         }
       }
       
-      // Add delay between messages
-      if (messageLines.length > 1) {
-        await new Promise(resolve => setTimeout(resolve, messageDelay));
-      }
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+      throw error;
     }
+  };
+
+  // Execute the sendMessages function
+  await sendMessages();
+  
+  // If continuous mode is enabled, repeatedly send messages until disconnected
+  if (enableContinuous) {
+    console.log(`Continuous mode enabled with ${delaySeconds} seconds delay between loops`);
     
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
-    throw error;
+    // Set up an interval to check if we're still connected and send again
+    const intervalId = setInterval(async () => {
+      if (!sock || getWhatsAppStatus() === 'disconnected') {
+        clearInterval(intervalId);
+        continueRunning = false;
+        console.log('Continuous messaging stopped: WhatsApp disconnected');
+        return;
+      }
+      
+      try {
+        console.log('Continuous mode: Starting new message cycle...');
+        await sendMessages();
+      } catch (error) {
+        console.error('Error in continuous messaging cycle:', error);
+      }
+    }, delaySeconds * 1000);
+    
+    // Stop the interval when disconnecting
+    sock.ev.on('connection.update', (update: any) => {
+      const { connection } = update;
+      if (connection === 'close') {
+        clearInterval(intervalId);
+        continueRunning = false;
+      }
+    });
   }
+  
+  return { success: true };
 };
 
 // Format phone number to WhatsApp JID format
